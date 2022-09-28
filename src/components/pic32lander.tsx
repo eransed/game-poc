@@ -769,7 +769,7 @@ const numberOfAsteroids: number = 50
 let myShip: SpaceObject = createDefaultSpaceObject()
 let allSpaceObjects: SpaceObject[] = []
 
-function init(cid: number, ctx: any) {
+function init(cid: number, ctx: any, sender: any) {
 
   myShip.name = "Slayer" + cid
   myShip.shape = Shape.Ship

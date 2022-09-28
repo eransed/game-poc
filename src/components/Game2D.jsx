@@ -26,7 +26,7 @@ let lastTime_ms
 
 function renderLoop(ctx, sender, renderFrameCallback, nextFrameCallback, cid) {
   console.log("renderLoop")
-  pic32lander.init(cid, ctx)
+  pic32lander.init(cid, ctx, sender)
   function update(time_ms) {
     clearScreen(ctx)
     renderFrameCallback(ctx)
