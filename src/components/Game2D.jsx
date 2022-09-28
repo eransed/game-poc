@@ -1,6 +1,11 @@
 // import React from "react"
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useContext } from "react"
+
+//Component
 import { pic32lander } from "./pic32lander"
+
+//Contexts
+import { ServiceContext } from "../contexts/serverContext"
 
 function renderFps(ctx, frameTime) {
   ctx.fillStyle = "#fff"
@@ -35,6 +40,9 @@ function renderLoop(ctx, sender, renderFrameCallback, nextFrameCallback, cid) {
 
 function Game2D(props) {
   const game2DcanvasRef = useRef(null)
+  const { socket } = useContext(ServiceContext)
+
+  console.log(socket)
 
   useEffect(() => {
     const canvas = game2DcanvasRef.current
