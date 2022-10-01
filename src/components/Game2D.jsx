@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useContext } from "react"
 
 //Component
-import { pic32lander } from "./pic32lander"
+import { game } from "./game"
 
 //Contexts
 import { ServiceContext } from "../contexts/serverContext"
@@ -11,7 +11,7 @@ function renderFps(ctx, frameTime) {
   ctx.fillStyle = "#fff"
   ctx.font = "24px courier"
   ctx.fillText(
-    "FPS: " + pic32lander.round2dec(1 / (frameTime / 1000), 3),
+    "FPS: " + game.round2dec(1 / (frameTime / 1000), 3),
     25,
     40
   )
@@ -26,7 +26,7 @@ let lastTime_ms
 
 function renderLoop(ctx, sender, renderFrameCallback, nextFrameCallback, cid) {
   console.log("renderLoop")
-  pic32lander.init(cid, ctx, sender)
+  game.init(cid, ctx, sender)
   function update(time_ms) {
     clearScreen(ctx)
     renderFrameCallback(ctx)
@@ -48,19 +48,19 @@ function Game2D(props) {
     const canvas = game2DcanvasRef.current
     const context = canvas.getContext("2d")
 
-    context.canvas.width = 1600 * 2
-    context.canvas.height = 900 * 2
+    context.canvas.width = 1600 * 1
+    context.canvas.height = 900 * 1
     // console.log("Canvas width: " + context.canvas.width)
     // console.log("Canvas height: " + context.canvas.height)
 
     renderLoop(
       context,
-      props.senderFunc,
-      pic32lander.renderFrame,
-      pic32lander.nextFrame,
+      socket,
+      game.renderFrame,
+      game.nextFrame,
       props.cid
     )
-  }, [props.senderFunc])
+  }, [])
 
   return (
     <div style={{ textAlign: "center" }}>

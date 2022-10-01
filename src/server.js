@@ -28,4 +28,16 @@ app.get("/version", (req, res) => {
 })
 
 app.listen(80)
-c.log("Listening on port 80...")
+
+function test1 () {
+  c.log("test1: Listening on port 80...")
+}
+
+
+let test2 = () => {
+  c.log("test2: Listening on port 80...")
+  c.log2("test2: log 2")
+}
+
+test1()
+test2()
