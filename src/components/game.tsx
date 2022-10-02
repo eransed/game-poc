@@ -1,6 +1,7 @@
 // Framework logic: take ref to canvas 2D context.
 // Render the game with a main game renderFrame function.
 // Step to next animation frame with a nextFrame function
+
 import { SpaceObject, Shape, space } from "./libspace"
 import { render } from "./librender"
 import { vec, Vec2d } from "./libvec"
@@ -10,12 +11,17 @@ import { m } from "./libm"
 const numberOfAsteroids: number = 1
 let myShip: SpaceObject = space.createDefaultSpaceObject()
 let allSpaceObjects: SpaceObject[] = []
-let wsocket: any;
+let initCalled: boolean = false
 
-function init(cid: number, ctx: any, socket: any) {
-  wsocket = socket
-  console.log("gameLib: Init: Setting wsocket: " + wsocket)
-  myShip.name = "Slayer" + cid
+function init(cid: number, ctx: any) {
+  if (initCalled === true) {
+    console.log ("Init already called!")
+    return;
+  }
+  initCalled = true;
+  
+  console.log("gameLib: Init")
+  myShip.name = "Slayer-" + cid
   myShip.shape = Shape.Ship
   myShip.health = 9000
   myShip.fuel = 400
@@ -48,32 +54,6 @@ function init(cid: number, ctx: any, socket: any) {
   }
   console.log(allSpaceObjects)
 }
-
-function lowerLeft(ctx: any, padding: number) {
-  const screen: Vec2d = { x: ctx.canvas.width, y: ctx.canvas.height }
-  return { x: padding, y: screen.y - padding }
-}
-
-function lowerRight(ctx: any, padding: number) {
-  const screen: Vec2d = { x: ctx.canvas.width, y: ctx.canvas.height }
-  return { x: screen.x - padding, y: screen.y - padding }
-}
-
-function upperLeft(ctx: any, padding: number) {
-  const screen: Vec2d = { x: ctx.canvas.width, y: ctx.canvas.height }
-  return { x: padding, y: padding }
-}
-
-function upperRight(ctx: any, padding: number) {
-  const screen: Vec2d = { x: ctx.canvas.width, y: ctx.canvas.height }
-  return { x: screen.x - padding, y: padding }
-}
-
-function center(ctx: any) {
-  const screen: Vec2d = { x: ctx.canvas.width, y: ctx.canvas.height }
-  return { x: screen.x / 2, y: screen.y / 2 }
-}
-
 
 function renderFrame(ctx: any) {
   for (let so of allSpaceObjects) {
@@ -111,9 +91,80 @@ function nextFrame(ctx: any) {
   space.friction(myShip, 0.991)
 }
 
+function renderFps(ctx: any, frameTime: number) {
+  ctx.fillStyle = "#fff"
+  ctx.font = "24px courier"
+  ctx.fillText(
+    "FPS: " + m.round2dec(1 / (frameTime / 1000), 3),
+    25,
+    40
+  )
+}
+
+function clearScreen(ctx: any) {
+  ctx.fillStyle = "#000"
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+}
+
+let lastTime_ms: number
+
+function renderLoop(ctx: any, renderFrameCallback: any, nextFrameCallback: any) {
+  console.log("renderLoop")
+  function update(time_ms: number) {
+    clearScreen(ctx)
+    renderFrameCallback(ctx)
+    requestAnimationFrame(update)
+    nextFrameCallback(ctx)
+    renderFps(ctx, time_ms - lastTime_ms)
+    lastTime_ms = time_ms
+  }
+  update(lastTime_ms)
+}
+
+let context: any
+
+let gotCanvas: boolean = false
+
+function getCanvas(id: string) {
+
+  if (gotCanvas === true) {
+    console.log("Canvas already added!")
+    return
+  }
+
+  gotCanvas = true
+
+  console.log ("Canvas id: " + id)
+
+  const canvas: any = document.getElementById(id)
+  const ctx = canvas.getContext("2d")
+  context = ctx
+  console.log ({context})
+
+  context.canvas.width = 1600 * 1
+  context.canvas.height = 900 * 1
+}
+
+let gameStarted: boolean = false
+
+function start() {
+
+  if (gameStarted === true) {
+    console.log("Game already started!")
+    return
+  }
+
+  gameStarted = true
+  
+  renderLoop(
+    context,
+    renderFrame,
+    nextFrame,
+  )
+}
+
 export const game = {
-  renderFrame: renderFrame,
-  nextFrame: nextFrame,
   init: init,
-  round2dec: m.round2dec,
+  getCanvas: getCanvas,
+  start: start,
 }

@@ -116,6 +116,30 @@ function offScreen(v: Vec2d, screen: Vec2d) {
     return false
 }
 
+function lowerLeft(screen: Vec2d, padding: number) {
+    return { x: padding, y: screen.y - padding }
+}
+
+function lowerRight(screen: Vec2d, padding: number) {
+    return { x: screen.x - padding, y: screen.y - padding }
+}
+
+function upperLeft(screen: Vec2d, padding: number) {
+    return { x: padding, y: padding }
+}
+
+function upperRight(screen: Vec2d, padding: number) {
+    return { x: screen.x - padding, y: padding }
+}
+
+function center(screen: Vec2d) {
+    return { x: screen.x / 2, y: screen.y / 2 }
+}
+
+function getScreenVecFromCanvasContext(ctx: any) {
+    const screen: Vec2d = { x: ctx.canvas.width, y: ctx.canvas.height }
+    return screen
+}
 
 export const vec = {
     offScreen: offScreen,
@@ -136,4 +160,10 @@ export const vec = {
     rndfVec_mm: rndfVec_mm,
     rndiVec_mm: rndiVec_mm,
     floor: floor,
+    getScreenVecFromCanvasContext: getScreenVecFromCanvasContext,
+    lowerLeft: lowerLeft,
+    lowerRight: lowerRight,
+    upperLeft: upperLeft,
+    upperRight: upperRight,
+    center: center,
 }
